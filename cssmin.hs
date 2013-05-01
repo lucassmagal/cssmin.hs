@@ -2,6 +2,7 @@ import System.Environment
 import Text.Regex
 import Control.Category
 
+data WhereAmI = Code | InlineComment | BlockComment
 
 main = do
     path:_ <- getArgs
@@ -16,20 +17,20 @@ main = do
       $ css
 
 
-removeComments css = removeComments' css "" where
+removeComments css = removeComments' css Code where
     removeComments' "" _ = ""
 
     -- match start of comments
-    removeComments' ('/':'*':tail) _ = removeComments' tail "*/"
-    removeComments' ('/':'/':tail) _ = removeComments' tail "\n"
+    removeComments' ('/':'*':remaining) _ = removeComments' remaining BlockComment
+    removeComments' ('/':'/':remaining) _ = removeComments' remaining InlineComment
 
     -- match end of comments
-    removeComments' ('*':'/':tail) "*/" = removeComments' tail ""
-    removeComments' ('\n':tail) "\n"    = removeComments' tail ""
+    removeComments' ('*':'/':remaining) BlockComment = removeComments' remaining Code
+    removeComments' ('\n':remaining) InlineComment   = removeComments' remaining Code
 
     -- match anything else
-    removeComments' (head:tail) ""      = head:removeComments' tail ""
-    removeComments' (head:tail) stop_on = removeComments' tail stop_on
+    removeComments' (start:remaining) Code      = start:removeComments' remaining Code
+    removeComments' (start:remaining) whereAmI  = removeComments' remaining whereAmI
 
 condenseWhitespace css = subRegex (mkRegex "[ ]+") css " "
 
