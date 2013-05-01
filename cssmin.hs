@@ -1,22 +1,19 @@
 import System.Environment
 import Text.Regex
-
-
--- This operator will pipe the result of one function
--- to another. "f1 ==> f2" is the same of "f2 (f1)"
--- Basically, it is the opposite of "$"
-(==>) = flip ($)
+import Control.Category
 
 
 main = do
-    args <- getArgs
-    css <- readFile $ args !! 0
+    path:_ <- getArgs
+    css <- readFile path
 
-    putStrLn $ removeComments css ==>
-               removeNewLines ==>
-               condenseWhitespace ==>
-               removeUnnecessarySemicolons ==>
-               condenseSemicolons
+    putStrLn
+      $ removeComments
+      >>> removeNewLines
+      >>> condenseWhitespace
+      >>> removeUnnecessarySemicolons
+      >>> condenseSemicolons
+      $ css
 
 
 removeComments css = removeComments' css "" where
