@@ -1,6 +1,6 @@
-import System.Environment
-import Text.Regex
-import Control.Category
+import System.Environment (getArgs)
+import Text.Regex (subRegex, mkRegex)
+import Control.Category ((>>>))
 
 data WhereAmI = Code | InlineComment | BlockComment
 
