@@ -17,20 +17,21 @@ main = do
       $ css
 
 
-removeComments css = removeComments' css Code where
-    removeComments' "" _ = ""
+removeComments = loop Code where
+    loop :: WhereAmI -> String -> String
+    loop _ "" = ""
 
     -- match start of comments
-    removeComments' ('/':'*':remaining) _ = removeComments' remaining BlockComment
-    removeComments' ('/':'/':remaining) _ = removeComments' remaining InlineComment
+    loop _ ('/':'*':remaining) = loop BlockComment remaining
+    loop _ ('/':'/':remaining) = loop InlineComment remaining
 
     -- match end of comments
-    removeComments' ('*':'/':remaining) BlockComment = removeComments' remaining Code
-    removeComments' ('\n':remaining) InlineComment   = removeComments' remaining Code
+    loop BlockComment ('*':'/':remaining) = loop Code remaining
+    loop InlineComment ('\n':remaining) = loop Code remaining
 
     -- match anything else
-    removeComments' (start:remaining) Code      = start:removeComments' remaining Code
-    removeComments' (start:remaining) whereAmI  = removeComments' remaining whereAmI
+    loop Code (start:remaining) = start:loop Code remaining
+    loop insideComment (_:remaining) = loop insideComment remaining
 
 condenseWhitespace css = subRegex (mkRegex "[ ]+") css " "
 
