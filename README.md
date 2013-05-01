@@ -8,13 +8,13 @@ It's highly based on Zachary Voase's [cssmin] script in Python.
 To execute it, you need "regex-compat":
 
     $ sudo cabal update
-    $ sudo cabal install regex-compat
+    $ sudo cabal install regex-compat-tdfa
 
     # To execute:
     $ runhaskell cssmin.hs normalize.css > normalize.min.css
 
     # Or you can compile
-    $ ghc cssmin.hs -o cssmin
+    $ ghc cssmin.hs -o cssmin -Wall
     $ ./cssmin normalize.css > normalize.min.css
 
 [cssmin]: https://github.com/zacharyvoase/cssmin
